@@ -253,7 +253,7 @@ const App = () => {
                 </div>
               </div>
               <span className="text-xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors">
-                Personal PC
+                SkyDC
               </span>
             </div>
 
@@ -1086,7 +1086,7 @@ const App = () => {
                 <div className="bg-blue-600 p-1.5 rounded-lg">
                     <Monitor className="h-6 w-6 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">Personal PC</span>
+                <span className="text-xl font-bold text-white">SkyDC</span>
               </div>
               <p className="text-slate-500 text-sm leading-relaxed mb-6">
                 High-performance cloud desktops for the modern workforce. Built for speed, security, and scale.
