@@ -67,7 +67,11 @@ const useParallax = (sensitivity = 20) => {
       setOffset({ x, y });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    // Only add listener on non-touch devices for performance
+    if (window.matchMedia("(pointer: fine)").matches) {
+      window.addEventListener('mousemove', handleMouseMove);
+    }
+    
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [sensitivity]);
 
@@ -99,12 +103,11 @@ const App = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('creators');
   const [activeFaq, setActiveFaq] = useState(null);
-  const parallax = useParallax(30); // Hero parallax effect
+  const parallax = useParallax(30); 
 
   // Handle scroll effect for navbar
   useEffect(() => {
     const handleScroll = () => {
-      // Use requestAnimationFrame for smoother scroll handling
       window.requestAnimationFrame(() => {
         setIsScrolled(window.scrollY > 20);
       });
@@ -123,12 +126,12 @@ const App = () => {
   const faqs = useMemo(() => [
     { q: "Do I need a fast internet connection?", a: "We recommend at least 15 Mbps for 1080p and 50 Mbps for 4K streaming. Our adaptive bitrate technology ensures smooth performance even on fluctuating connections." },
     { q: "Can I install my own software?", a: "Absolutely. You get full administrator access to a Windows or Linux environment. Install Steam, Adobe Suite, Blender, VS Code, or any custom enterprise software." },
-    { q: "Is my data persistent?", a: "Yes. Your storage drive persists between sessions. When you shut down your Personal PC, your files are encrypted and stored safely until you launch it again." },
+    { q: "Is my data persistent?", a: "Yes. Your storage drive persists between sessions. When you shut down your SkyDc, your files are encrypted and stored safely until you launch it again." },
     { q: "What happens if I forget to shut down?", a: "You can set auto-shutdown timers to prevent accidental charges. We also send notifications if your machine has been idle for an extended period." }
   ], []);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-100 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden relative">
+    <div className="min-h-screen bg-[#020617] text-slate-100 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden w-full max-w-[100vw] relative">
       
       {/* Global Styles for Custom Animations */}
       <style>{`
@@ -240,7 +243,7 @@ const App = () => {
         className={`fixed w-full z-50 transition-all duration-500 ${
           isScrolled 
             ? 'bg-[#020617]/80 backdrop-blur-xl border-b border-white/5 py-4 shadow-2xl shadow-blue-900/10' 
-            : 'bg-transparent py-6'
+            : 'bg-transparent py-5 lg:py-6'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -249,16 +252,16 @@ const App = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-blue-500 blur-lg opacity-40 group-hover:opacity-60 transition-opacity"></div>
                 <div className="bg-gradient-to-tr from-blue-600 to-cyan-500 p-2 rounded-lg relative">
-                  <Monitor className="h-6 w-6 text-white" />
+                  <Monitor className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
               </div>
-              <span className="text-xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors">
-                SkyDC
+              <span className="text-lg sm:text-xl font-bold tracking-tight text-white group-hover:text-cyan-400 transition-colors">
+                SkyDc
               </span>
             </div>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden lg:flex items-center space-x-8">
               {navLinks.map((link) => (
                 <a 
                   key={link.name} 
@@ -270,7 +273,7 @@ const App = () => {
               ))}
             </div>
 
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-4">
               <button className="text-sm font-medium text-slate-300 hover:text-white px-4 py-2 hover:bg-white/5 rounded-full transition-all">
                 Sign In
               </button>
@@ -281,7 +284,7 @@ const App = () => {
             </div>
 
             {/* Mobile menu button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="text-slate-300 hover:text-white p-2"
@@ -292,9 +295,9 @@ const App = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-[#020617] border-b border-white/10 px-4 py-6 shadow-2xl backdrop-blur-xl">
+          <div className="lg:hidden absolute top-full left-0 w-full bg-[#020617] border-b border-white/10 px-4 py-6 shadow-2xl backdrop-blur-xl transition-all">
             <div className="flex flex-col space-y-4">
               {navLinks.map((link) => (
                 <a 
@@ -307,7 +310,8 @@ const App = () => {
                 </a>
               ))}
               <hr className="border-white/10 my-2" />
-              <button className="bg-blue-600 text-white px-4 py-3 rounded-xl text-center font-bold">
+              <button className="text-left text-lg font-medium text-slate-300 pl-2">Sign In</button>
+              <button className="bg-white text-slate-900 px-4 py-3 rounded-xl text-center font-bold mt-2">
                 Get Started
               </button>
             </div>
@@ -316,12 +320,12 @@ const App = () => {
       </nav>
 
       {/* REIMAGINED HERO SECTION */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-[90vh] flex items-center bg-[#020617]">
+      <section className="relative pt-28 pb-16 lg:pt-48 lg:pb-32 overflow-hidden min-h-[auto] lg:min-h-[90vh] flex items-center bg-[#020617]">
         
         {/* Cinematic Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Cyber Grid Floor */}
-            <div className="absolute bottom-0 left-[-50%] right-[-50%] h-[500px] opacity-20"
+            <div className="absolute bottom-0 left-[-50%] right-[-50%] h-[300px] sm:h-[500px] opacity-20"
                  style={{
                     background: 'linear-gradient(transparent 0%, #0ea5e9 100%)',
                     maskImage: 'linear-gradient(to bottom, transparent, black)',
@@ -329,61 +333,61 @@ const App = () => {
                  }}>
                  <div className="absolute inset-0" style={{
                     backgroundImage: 'linear-gradient(rgba(14, 165, 233, 0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 165, 233, 0.5) 1px, transparent 1px)',
-                    backgroundSize: '60px 60px',
+                    backgroundSize: '40px 40px sm:60px sm:60px',
                     animation: 'grid-move 20s linear infinite'
                  }}></div>
             </div>
             
             {/* Top Spotlight */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/10 rounded-[100%] blur-[120px] mix-blend-screen"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100%] sm:w-[800px] h-[300px] sm:h-[500px] bg-blue-600/10 rounded-[100%] blur-[80px] sm:blur-[120px] mix-blend-screen"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             
             {/* Hero Text Content */}
-            <div className="lg:w-1/2 text-center lg:text-left relative">
+            <div className="w-full lg:w-1/2 text-center lg:text-left relative z-20">
               <Reveal>
-                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-slate-900/80 border border-blue-500/30 backdrop-blur-md mb-8 hover:bg-slate-800 transition-all cursor-default shadow-[0_0_20px_rgba(59,130,246,0.15)] group">
-                  <span className="relative flex h-2 w-2 mr-3">
+                <div className="inline-flex items-center px-3 sm:px-4 py-1.5 rounded-full bg-slate-900/80 border border-blue-500/30 backdrop-blur-md mb-6 sm:mb-8 hover:bg-slate-800 transition-all cursor-default shadow-[0_0_20px_rgba(59,130,246,0.15)] group">
+                  <span className="relative flex h-2 w-2 mr-2 sm:mr-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                   </span>
-                  <span className="text-sm text-slate-300 font-medium tracking-wide group-hover:text-white transition-colors">
+                  <span className="text-xs sm:text-sm text-slate-300 font-medium tracking-wide group-hover:text-white transition-colors">
                     <span className="text-blue-400 font-bold">New:</span> 24GB VRAM Instances Live
                   </span>
                 </div>
               </Reveal>
               
               <Reveal delay={100}>
-                <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-8 text-white leading-[1.05]">
-                  Infinite <br />
+                <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tighter mb-6 sm:mb-8 text-white leading-[1.1] sm:leading-[1.05]">
+                  Infinite <br className="hidden sm:block" />
                   <span className="hero-glow-text">Computing.</span>
                 </h1>
               </Reveal>
               
               <Reveal delay={200}>
-                <p className="max-w-xl mx-auto lg:mx-0 text-xl text-slate-400 mb-12 leading-relaxed">
+                <p className="max-w-xl mx-auto lg:mx-0 text-base sm:text-lg lg:text-xl text-slate-400 mb-8 sm:mb-12 leading-relaxed">
                   Abandon hardware limitations. Stream a supercomputer to your browser with <span className="text-white font-semibold">zero latency</span>. 
                   Perfect for 3D rendering, ML training, and AAA gaming.
                 </p>
               </Reveal>
               
               <Reveal delay={300}>
-                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6">
-                  <button className="w-full sm:w-auto px-10 py-5 bg-white text-black hover:bg-cyan-50 rounded-full font-bold text-lg transition-all shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] hover:scale-105 flex items-center justify-center group relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 lg:space-x-6 w-full">
+                  <button className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-white text-black hover:bg-cyan-50 rounded-full font-bold text-base sm:text-lg transition-all shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] hover:scale-[1.02] flex items-center justify-center group relative overflow-hidden">
                     <span className="relative z-10 flex items-center">Start Free Trial <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" /></span>
                   </button>
                   
-                  <button className="w-full sm:w-auto px-10 py-5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full font-bold text-lg transition-all backdrop-blur-sm flex items-center justify-center group">
-                    <Play className="mr-3 h-5 w-5 fill-current text-white group-hover:scale-110 transition-transform" />
+                  <button className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full font-bold text-base sm:text-lg transition-all backdrop-blur-sm flex items-center justify-center group">
+                    <Play className="mr-3 h-4 w-4 sm:h-5 sm:w-5 fill-current text-white group-hover:scale-110 transition-transform" />
                     See It In Action
                   </button>
                 </div>
               </Reveal>
               
               <Reveal delay={400}>
-                <div className="mt-16 flex items-center justify-center lg:justify-start space-x-6 text-slate-500 text-sm border-t border-white/5 pt-8">
+                <div className="mt-10 sm:mt-16 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:space-x-6 text-slate-500 text-xs sm:text-sm border-t border-white/5 pt-6 sm:pt-8">
                    <div className="flex items-center space-x-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
                       <span>No credit card required</span>
@@ -398,78 +402,74 @@ const App = () => {
 
             {/* Hero Visual - "The Holographic Rig" with Mouse Parallax */}
             <div 
-              className="lg:w-1/2 relative lg:h-[700px] flex items-center justify-center perspective-1000"
-              style={{
-                perspective: '1000px'
-              }}
+              className="w-full lg:w-1/2 relative min-h-[350px] sm:min-h-[450px] lg:h-[700px] flex items-center justify-center perspective-1000 mt-8 lg:mt-0"
+              style={{ perspective: '1000px' }}
             >
               <div 
-                className="relative w-full max-w-xl aspect-square transition-transform duration-100 ease-out"
-                style={{
-                  transform: `rotateY(${parallax.x}deg) rotateX(${-parallax.y}deg)`
-                }}
+                className="relative w-full max-w-[500px] aspect-square transition-transform duration-100 ease-out"
+                style={{ transform: `rotateY(${parallax.x}deg) rotateX(${-parallax.y}deg)` }}
               >
                 
                 {/* Central Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-500/20 rounded-full blur-[100px] animate-pulse-glow"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] sm:w-[120%] sm:h-[120%] bg-blue-500/20 rounded-full blur-[60px] sm:blur-[100px] animate-pulse-glow"></div>
 
                 {/* Main Terminal Window */}
-                <div className="relative z-20 bg-[#0B1120]/90 backdrop-blur-xl border border-blue-500/30 rounded-2xl overflow-hidden shadow-[0_0_80px_rgba(59,130,246,0.3)] transform rotate-y-[-10deg] rotate-x-[5deg] animate-float">
+                <div className="relative z-20 bg-[#0B1120]/90 backdrop-blur-xl border border-blue-500/30 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(59,130,246,0.2)] sm:shadow-[0_0_80px_rgba(59,130,246,0.3)] transform rotate-y-[-10deg] rotate-x-[5deg] animate-float w-full">
                     
                     {/* Window Controls */}
-                    <div className="h-10 bg-[#020617] border-b border-white/10 flex items-center px-4 justify-between">
-                        <div className="flex space-x-2">
-                            <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                            <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                            <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    <div className="h-8 sm:h-10 bg-[#020617] border-b border-white/10 flex items-center px-3 sm:px-4 justify-between">
+                        <div className="flex space-x-1.5 sm:space-x-2">
+                            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500/80"></div>
+                            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500/80"></div>
+                            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500/80"></div>
                         </div>
-                        <div className="text-xs text-slate-500 font-mono flex items-center">
-                            <Shield size={10} className="mr-1 text-green-500" /> 
-                            SECURE_CONNECTION_ESTABLISHED
+                        <div className="text-[10px] sm:text-xs text-slate-500 font-mono flex items-center">
+                            <Shield size={10} className="mr-1 text-green-500 hidden sm:block" /> 
+                            SECURE_CONNECTION
                         </div>
                     </div>
 
                     {/* Terminal Content */}
-                    <div className="p-6 font-mono text-sm h-[320px] w-[500px] text-blue-100 overflow-hidden relative">
+                    <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm h-auto min-h-[250px] sm:h-[320px] w-full text-blue-100 relative break-all whitespace-pre-wrap">
                         <div className="space-y-2">
                             <div className="flex">
-                                <span className="text-green-400 mr-2">➜</span>
-                                <span className="text-blue-300">~</span>
-                                <span className="text-slate-400 ml-2">personal-pc init --gpu=rtx4090</span>
+                                <span className="text-green-400 mr-2 shrink-0">➜</span>
+                                <span className="text-blue-300 shrink-0">~</span>
+                                <span className="text-slate-400 ml-2">skydc init --gpu=rtx4090</span>
                             </div>
                             
-                            <div className="pl-4 border-l border-white/10 space-y-1 text-xs text-slate-400 py-2">
-                                <div>[INFO] Allocating isolated environment...</div>
-                                <div>[INFO] Mounting 2TB NVMe Storage... <span className="text-green-400">DONE (0.2s)</span></div>
-                                <div>[INFO] Initializing NVIDIA Drivers v535.86... <span className="text-green-400">DONE</span></div>
+                            <div className="pl-3 sm:pl-4 border-l border-white/10 space-y-1 text-[10px] sm:text-xs text-slate-400 py-2">
+                                <div>[INFO] Allocating environment...</div>
+                                <div>[INFO] Mounting 2TB NVMe... <span className="text-green-400">DONE (0.2s)</span></div>
+                                <div>[INFO] Init NVIDIA Drivers... <span className="text-green-400">DONE</span></div>
                             </div>
 
                             <div className="flex pt-2">
-                                <span className="text-green-400 mr-2">➜</span>
-                                <span className="text-blue-300">~</span>
+                                <span className="text-green-400 mr-2 shrink-0">➜</span>
+                                <span className="text-blue-300 shrink-0">~</span>
                                 <span className="text-slate-400 ml-2">./run-benchmark.sh</span>
                             </div>
 
                             {/* Live Stats Visual */}
-                            <div className="mt-4 bg-[#020617]/80 rounded-lg p-4 border border-blue-500/20 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-xl -mr-10 -mt-10"></div>
-                                <div className="grid grid-cols-2 gap-4 relative z-10">
+                            <div className="mt-4 bg-[#020617]/80 rounded-lg p-3 sm:p-4 border border-blue-500/20 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-blue-500/10 rounded-full blur-xl -mr-10 -mt-10"></div>
+                                <div className="grid grid-cols-2 gap-3 sm:gap-4 relative z-10">
                                     <div>
-                                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">GPU Load</div>
-                                        <div className="text-2xl font-bold text-white mb-1">98<span className="text-sm text-slate-500">%</span></div>
+                                        <div className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-wider mb-1">GPU Load</div>
+                                        <div className="text-xl sm:text-2xl font-bold text-white mb-1">98<span className="text-xs sm:text-sm text-slate-500">%</span></div>
                                         <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
                                             <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 w-[98%] shadow-[0_0_10px_rgba(56,189,248,0.8)]"></div>
                                         </div>
                                     </div>
                                     <div>
-                                        <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Memory</div>
-                                        <div className="text-2xl font-bold text-white mb-1">18.4<span className="text-sm text-slate-500">GB</span></div>
+                                        <div className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-wider mb-1">Memory</div>
+                                        <div className="text-xl sm:text-2xl font-bold text-white mb-1">18.4<span className="text-xs sm:text-sm text-slate-500">GB</span></div>
                                         <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
                                             <div className="h-full bg-purple-500 w-[75%] shadow-[0_0_10px_rgba(168,85,247,0.8)]"></div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-4 flex items-center justify-between text-xs border-t border-white/5 pt-3">
+                                <div className="mt-3 sm:mt-4 flex items-center justify-between text-[10px] sm:text-xs border-t border-white/5 pt-2 sm:pt-3">
                                     <span className="text-slate-400">FPS: <span className="text-green-400 font-bold">144</span></span>
                                     <span className="text-slate-400">Latency: <span className="text-green-400 font-bold">12ms</span></span>
                                 </div>
@@ -481,18 +481,18 @@ const App = () => {
                     </div>
                 </div>
 
-                {/* Floating Elements around Terminal (Reacting to Parallax) */}
+                {/* Floating Elements around Terminal (Hidden on very small screens, reacts to Parallax on larger) */}
                 <div 
-                  className="absolute -right-12 top-20 bg-slate-900/90 backdrop-blur border border-slate-700 p-3 rounded-xl shadow-xl"
+                  className="hidden sm:flex absolute -right-6 md:-right-12 top-10 md:top-20 bg-slate-900/90 backdrop-blur border border-slate-700 p-2 md:p-3 rounded-xl shadow-xl z-30"
                   style={{ transform: `translateZ(50px) translateX(${-parallax.x * 1.5}px) translateY(${-parallax.y * 1.5}px)` }}
                 >
-                    <Server className="text-blue-400 h-6 w-6" />
+                    <Server className="text-blue-400 h-5 w-5 md:h-6 md:w-6" />
                 </div>
                 <div 
-                  className="absolute -left-8 bottom-32 bg-slate-900/90 backdrop-blur border border-slate-700 p-3 rounded-xl shadow-xl"
+                  className="hidden sm:flex absolute -left-4 md:-left-8 bottom-16 md:bottom-32 bg-slate-900/90 backdrop-blur border border-slate-700 p-2 md:p-3 rounded-xl shadow-xl z-30"
                   style={{ transform: `translateZ(30px) translateX(${parallax.x * 1.2}px) translateY(${parallax.y * 1.2}px)` }}
                 >
-                    <Cpu className="text-green-400 h-6 w-6" />
+                    <Cpu className="text-green-400 h-5 w-5 md:h-6 md:w-6" />
                 </div>
 
               </div>
@@ -502,9 +502,9 @@ const App = () => {
       </section>
 
       {/* Infinite Marquee Section */}
-      <section className="py-12 bg-slate-950/50 border-y border-white/5 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 mb-8 text-center">
-            <p className="text-slate-500 text-sm font-semibold tracking-widest uppercase">Powering Workflows In</p>
+      <section className="py-8 sm:py-12 bg-slate-950/50 border-y border-white/5 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 mb-6 sm:mb-8 text-center">
+            <p className="text-slate-500 text-xs sm:text-sm font-semibold tracking-widest uppercase">Powering Workflows In</p>
         </div>
         <div className="relative w-full">
             <div className="flex whitespace-nowrap animate-marquee">
@@ -513,9 +513,9 @@ const App = () => {
                   "Unreal Engine 5", "Blender", "Adobe After Effects", "Unity", "Maya", 
                   "TensorFlow", "PyTorch", "Cinema 4D", "Houdini", "VS Code", "Docker", "Kubernetes"
                 ].map((item, i) => (
-                    <div key={i} className="mx-8 flex items-center space-x-2 text-2xl font-bold text-slate-700 hover:text-cyan-500 transition-colors cursor-default">
+                    <div key={i} className="mx-4 sm:mx-8 flex items-center space-x-2 text-lg sm:text-2xl font-bold text-slate-700 hover:text-cyan-500 transition-colors cursor-default">
                         <span>{item}</span>
-                        <div className="h-1.5 w-1.5 rounded-full bg-slate-800 ml-8"></div>
+                        <div className="h-1.5 w-1.5 rounded-full bg-slate-800 ml-4 sm:ml-8"></div>
                     </div>
                 ))}
                 {/* Duplicate Set for smooth loop */}
@@ -523,32 +523,32 @@ const App = () => {
                    "Unreal Engine 5", "Blender", "Adobe After Effects", "Unity", "Maya", 
                    "TensorFlow", "PyTorch", "Cinema 4D", "Houdini", "VS Code", "Docker", "Kubernetes"
                 ].map((item, i) => (
-                    <div key={`dup-${i}`} className="mx-8 flex items-center space-x-2 text-2xl font-bold text-slate-700 hover:text-cyan-500 transition-colors cursor-default">
+                    <div key={`dup-${i}`} className="mx-4 sm:mx-8 flex items-center space-x-2 text-lg sm:text-2xl font-bold text-slate-700 hover:text-cyan-500 transition-colors cursor-default">
                         <span>{item}</span>
-                        <div className="h-1.5 w-1.5 rounded-full bg-slate-800 ml-8"></div>
+                        <div className="h-1.5 w-1.5 rounded-full bg-slate-800 ml-4 sm:ml-8"></div>
                     </div>
                 ))}
             </div>
             {/* Fade edges */}
-            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#020617] to-transparent z-10"></div>
-            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#020617] to-transparent z-10"></div>
+            <div className="absolute inset-y-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-[#020617] to-transparent z-10"></div>
+            <div className="absolute inset-y-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-[#020617] to-transparent z-10"></div>
         </div>
       </section>
 
       {/* NEW: Launch in 3 Steps */}
-      <section id="steps" className="py-24 relative overflow-hidden">
+      <section id="steps" className="py-16 sm:py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Launch Your Supercomputer</h2>
-                    <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                <div className="text-center mb-12 sm:mb-16">
+                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 sm:mb-6">Launch Your Supercomputer</h2>
+                    <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
                         Go from signup to a fully powerful desktop in under 60 seconds.
                     </p>
                 </div>
             </Reveal>
 
-            <div className="grid md:grid-cols-3 gap-8 relative">
-                {/* Connecting Line */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                {/* Connecting Line (Desktop Only) */}
                 <div className="hidden md:block absolute top-12 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-900 to-transparent z-0"></div>
                 
                 <StepCard 
@@ -556,69 +556,72 @@ const App = () => {
                     number="01"
                     title="Create Account"
                     description="Sign up in seconds. No lengthy verification or hardware deposits required."
-                    icon={<Users className="text-white" />}
+                    icon={<Users className="text-white h-6 w-6" />}
                 />
                 <StepCard 
                     delay={100}
                     number="02"
                     title="Choose Config"
                     description="Select from Starter, Pro, or Studio tiers based on your workflow needs."
-                    icon={<Cpu className="text-white" />}
+                    icon={<Cpu className="text-white h-6 w-6" />}
                 />
                 <StepCard 
                     delay={200}
                     number="03"
                     title="Connect & Create"
                     description="Launch your desktop in the browser or via our native app. Zero latency."
-                    icon={<Zap className="text-white" />}
+                    icon={<Zap className="text-white h-6 w-6" />}
                 />
             </div>
         </div>
       </section>
 
       {/* Features Grid */}
-      <section id="features" className="py-24 relative bg-slate-950/30">
+      <section id="features" className="py-16 sm:py-24 relative bg-slate-950/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12 sm:mb-20">
             <Reveal>
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Features that scale</h2>
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 sm:mb-6">Features that scale</h2>
+                <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
+                Hardware limitations are a thing of the past. Access enterprise-grade power instantly with our global infrastructure.
+                </p>
             </Reveal>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <FeatureCard 
               delay={0}
-              icon={<Cpu className="h-8 w-8 text-cyan-400" />}
+              icon={<Cpu className="h-6 w-6 sm:h-8 sm:w-8 text-cyan-400" />}
               title="RTX Enabled GPUs"
               description="Access the latest NVIDIA RTX GPUs for ray-tracing, AI rendering, and heavy computation workloads."
             />
             <FeatureCard 
               delay={100}
-              icon={<Zap className="h-8 w-8 text-yellow-400" />}
+              icon={<Zap className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400" />}
               title="Low Latency Streaming"
               description="Our proprietary protocol delivers up to 4K 60FPS with sub-millisecond input delay."
             />
             <FeatureCard 
               delay={200}
-              icon={<Globe className="h-8 w-8 text-blue-400" />}
+              icon={<Globe className="h-6 w-6 sm:h-8 sm:w-8 text-blue-400" />}
               title="Global Coverage"
               description="23+ Data centers worldwide ensure you are always close to your personal workstation."
             />
             <FeatureCard 
               delay={300}
-              icon={<Shield className="h-8 w-8 text-green-400" />}
+              icon={<Shield className="h-6 w-6 sm:h-8 sm:w-8 text-green-400" />}
               title="Encrypted & Isolated"
               description="Your data is yours. Every machine is an isolated VM with AES-256 encrypted connections."
             />
             <FeatureCard 
               delay={400}
-              icon={<Layers className="h-8 w-8 text-purple-400" />}
+              icon={<Layers className="h-6 w-6 sm:h-8 sm:w-8 text-purple-400" />}
               title="Scalable Storage"
               description="Expand your SSD storage on the fly. Keep your heavy assets in the cloud, accessible anywhere."
             />
             <FeatureCard 
               delay={500}
-              icon={<Users className="h-8 w-8 text-pink-400" />}
+              icon={<Users className="h-6 w-6 sm:h-8 sm:w-8 text-pink-400" />}
               title="Team Workspaces"
               description="Onboard freelancers or team members in seconds with pre-configured environments."
             />
@@ -627,33 +630,32 @@ const App = () => {
       </section>
 
       {/* Interactive Use Cases */}
-      <section id="solutions" className="py-32 relative overflow-hidden bg-[#020617]">
+      <section id="solutions" className="py-16 sm:py-32 relative overflow-hidden bg-[#020617]">
         {/* Dynamic Background Glows */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none hidden md:block">
            <div className={`absolute top-1/4 -left-1/4 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] transition-all duration-1000 ease-in-out ${activeTab === 'creators' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}></div>
            <div className={`absolute bottom-1/4 -right-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] transition-all duration-1000 ease-in-out ${activeTab === 'engineers' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
             {/* Section Header & Tab Switcher */}
             <Reveal>
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">
-                        One Platform. <br/>
+                <div className="text-center mb-12 sm:mb-16">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 sm:mb-8">
+                        One Platform. <br className="hidden sm:block" />
                         <span className={`bg-clip-text text-transparent bg-gradient-to-r animate-gradient-x ${activeTab === 'creators' ? 'from-blue-400 via-cyan-400 to-emerald-400' : 'from-pink-400 via-purple-400 to-indigo-400'}`}>
                             Infinite Possibilities.
                         </span>
                     </h2>
                     
-                    {/* Enhanced Tab Pill */}
-                    <div className="inline-flex bg-slate-900/80 p-1.5 rounded-full border border-white/10 backdrop-blur-md relative shadow-2xl">
+                    {/* Enhanced Tab Pill (Fully responsive) */}
+                    <div className="flex bg-slate-900/80 p-1.5 rounded-full border border-white/10 backdrop-blur-md relative shadow-2xl w-full max-w-[320px] sm:max-w-[400px] mx-auto">
                         {/* Sliding Background */}
                         <div 
-                            className={`absolute top-1.5 bottom-1.5 rounded-full shadow-lg transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) z-0 ${activeTab === 'creators' ? 'bg-blue-600' : 'bg-purple-600'}`}
+                            className={`absolute top-1.5 bottom-1.5 rounded-full shadow-lg transition-all duration-500 ease-out z-0 ${activeTab === 'creators' ? 'bg-blue-600' : 'bg-purple-600'}`}
                             style={{
-                                left: activeTab === 'creators' ? '6px' : '50%',
-                                width: 'calc(50% - 9px)',
-                                transform: activeTab === 'engineers' ? 'translateX(3px)' : 'translateX(0)' 
+                                left: activeTab === 'creators' ? '1.5%' : '50%',
+                                width: '48.5%'
                             }}
                         />
                         
@@ -661,11 +663,11 @@ const App = () => {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`relative z-10 px-8 py-3 rounded-full text-sm font-bold transition-colors duration-300 ${
+                                className={`relative z-10 py-3 rounded-full text-xs sm:text-sm font-bold transition-colors duration-300 w-1/2 flex items-center justify-center ${
                                     activeTab === tab ? 'text-white' : 'text-slate-400 hover:text-white'
-                                } min-w-[160px] flex items-center justify-center`}
+                                }`}
                             >
-                                {tab === 'creators' ? <ImageIcon size={16} className="mr-2" /> : <Code size={16} className="mr-2" />}
+                                {tab === 'creators' ? <ImageIcon size={14} className="mr-2 hidden sm:block" /> : <Code size={14} className="mr-2 hidden sm:block" />}
                                 For {tab.charAt(0).toUpperCase() + tab.slice(1)}
                             </button>
                         ))}
@@ -674,73 +676,71 @@ const App = () => {
             </Reveal>
 
             {/* Main Content Area */}
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 {/* Left Text Content */}
-                <div className="relative min-h-[400px]">
-                    {activeTab === 'creators' ? (
-                        <div className="absolute inset-0 transition-all duration-500 ease-in-out opacity-100 translate-x-0">
-                            <Reveal delay={100}>
-                                <div className="bg-blue-500/10 w-12 h-12 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20">
-                                    <Box className="text-blue-400" />
-                                </div>
-                                <h3 className="text-3xl font-bold text-white mb-4">Accelerate your Creative Suite</h3>
-                                <p className="text-slate-400 mb-8 text-lg leading-relaxed">
-                                    Running After Effects, Blender, or Premiere Pro on a laptop? Stop waiting for render bars. Personal PC gives you desktop-class power on the go.
-                                </p>
-                                <ul className="space-y-4 mb-8">
-                                    <ListItem text="Render 10x faster with cloud GPUs" color="text-blue-400" />
-                                    <ListItem text="Edit 8K footage without proxies" color="text-blue-400" />
-                                    <ListItem text="Collaborate on large assets instantly" color="text-blue-400" />
-                                </ul>
-                                <button className="text-blue-400 font-bold flex items-center hover:text-blue-300 group/btn">
-                                    Explore Creative Workflows <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover/btn:translate-x-2" />
-                                </button>
-                            </Reveal>
-                        </div>
-                    ) : (
-                        <div className="absolute inset-0 transition-all duration-500 ease-in-out opacity-100 translate-x-0">
-                            <Reveal delay={100}>
-                                <div className="bg-purple-500/10 w-12 h-12 rounded-2xl flex items-center justify-center mb-6 border border-purple-500/20">
-                                    <Terminal className="text-purple-400" />
-                                </div>
-                                <h3 className="text-3xl font-bold text-white mb-4">Compile Faster. Build More.</h3>
-                                <p className="text-slate-400 mb-8 text-lg leading-relaxed">
-                                    Perfect for game development, data science, and heavy compilation tasks. Spin up a fresh environment for every project in seconds.
-                                </p>
-                                <ul className="space-y-4 mb-8">
-                                    <ListItem text="Unreal Engine 5 & Unity ready" color="text-purple-400" />
-                                    <ListItem text="Linux & Windows dual-boot options" color="text-purple-400" />
-                                    <ListItem text="Scalable cores for data processing" color="text-purple-400" />
-                                </ul>
-                                <button className="text-purple-400 font-bold flex items-center hover:text-purple-300 group/btn">
-                                    Explore Engineering Docs <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover/btn:translate-x-2" />
-                                </button>
-                            </Reveal>
-                        </div>
-                    )}
+                <div className="relative">
+                    <div className={`${activeTab === 'creators' ? 'block animate-in fade-in slide-in-from-bottom-4 duration-500' : 'hidden'}`}>
+                        <Reveal delay={100}>
+                            <div className="bg-blue-500/10 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 border border-blue-500/20">
+                                <Box className="text-blue-400 h-5 w-5 sm:h-6 sm:w-6" />
+                            </div>
+                            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">Accelerate your Creative Suite</h3>
+                            <p className="text-slate-400 mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
+                                Running After Effects, Blender, or Premiere Pro on a laptop? Stop waiting for render bars. SkyDc gives you desktop-class power on the go.
+                            </p>
+                            <ul className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+                                <ListItem text="Render 10x faster with cloud GPUs" color="text-blue-400" />
+                                <ListItem text="Edit 8K footage without proxies" color="text-blue-400" />
+                                <ListItem text="Collaborate on large assets instantly" color="text-blue-400" />
+                            </ul>
+                            <button className="text-blue-400 font-bold flex items-center hover:text-blue-300 group/btn text-sm sm:text-base">
+                                Explore Creative Workflows <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover/btn:translate-x-2" />
+                            </button>
+                        </Reveal>
+                    </div>
+                    
+                    <div className={`${activeTab === 'engineers' ? 'block animate-in fade-in slide-in-from-bottom-4 duration-500' : 'hidden'}`}>
+                        <Reveal delay={100}>
+                            <div className="bg-purple-500/10 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 border border-purple-500/20">
+                                <Terminal className="text-purple-400 h-5 w-5 sm:h-6 sm:w-6" />
+                            </div>
+                            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">Compile Faster. Build More.</h3>
+                            <p className="text-slate-400 mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
+                                Perfect for game development, data science, and heavy compilation tasks. Spin up a fresh environment for every project in seconds.
+                            </p>
+                            <ul className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+                                <ListItem text="Unreal Engine 5 & Unity ready" color="text-purple-400" />
+                                <ListItem text="Linux & Windows dual-boot options" color="text-purple-400" />
+                                <ListItem text="Scalable cores for data processing" color="text-purple-400" />
+                            </ul>
+                            <button className="text-purple-400 font-bold flex items-center hover:text-purple-300 group/btn text-sm sm:text-base">
+                                Explore Engineering Docs <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover/btn:translate-x-2" />
+                            </button>
+                        </Reveal>
+                    </div>
                 </div>
 
                 {/* Right Visual Content */}
-                <div className="relative group perspective-1000">
+                <div className="relative group perspective-1000 w-full mt-6 lg:mt-0">
                      <Reveal delay={200}>
-                        <div className={`absolute -inset-1 rounded-2xl blur-lg opacity-40 transition-colors duration-500 ${activeTab === 'creators' ? 'bg-blue-600' : 'bg-purple-600'}`}></div>
+                        <div className={`hidden sm:block absolute -inset-1 rounded-2xl blur-lg opacity-40 transition-colors duration-500 ${activeTab === 'creators' ? 'bg-blue-600' : 'bg-purple-600'}`}></div>
                         
-                        <div className="relative glass-panel rounded-2xl overflow-hidden shadow-2xl border border-white/10 transition-transform duration-500 hover:scale-[1.02] hover:-rotate-1">
+                        <div className="relative glass-panel rounded-2xl overflow-hidden shadow-2xl border border-white/10 transition-transform duration-500 sm:hover:scale-[1.02] sm:hover:-rotate-1 w-full">
                             {/* Browser Header */}
-                            <div className="bg-[#0F172A] px-5 py-3 border-b border-slate-800 flex items-center space-x-4">
-                                <div className="flex space-x-2">
-                                    <div className="w-3 h-3 rounded-full bg-slate-600"></div>
-                                    <div className="w-3 h-3 rounded-full bg-slate-600"></div>
-                                    <div className="w-3 h-3 rounded-full bg-slate-600"></div>
+                            <div className="bg-[#0F172A] px-3 sm:px-5 py-2.5 sm:py-3 border-b border-slate-800 flex items-center space-x-2 sm:space-x-4">
+                                <div className="flex space-x-1.5 sm:space-x-2">
+                                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-600"></div>
+                                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-600"></div>
+                                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-slate-600"></div>
                                 </div>
-                                <div className="bg-[#1E293B] px-4 py-1.5 rounded-lg text-xs text-slate-400 flex-1 text-center font-mono flex items-center justify-center">
-                                    <Shield size={12} className="mr-2" /> 
-                                    {activeTab === 'creators' ? 'blender-cloud-session-01' : 'root@vagon-instance-dev'}
+                                <div className="bg-[#1E293B] px-3 sm:px-4 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs text-slate-400 flex-1 text-center font-mono flex items-center justify-center truncate">
+                                    <Shield size={10} className="mr-1 sm:mr-2 shrink-0" /> 
+                                    <span className="truncate">{activeTab === 'creators' ? 'blender-cloud-session-01' : 'root@vagon-instance-dev'}</span>
                                 </div>
                             </div>
 
                             {/* Dynamic Viewport */}
-                            <div className="aspect-[16/10] bg-black relative">
+                            <div className="aspect-video sm:aspect-[16/10] bg-black relative w-full">
                                 {activeTab === 'creators' ? (
                                     <div className="w-full h-full relative overflow-hidden bg-slate-900">
                                         {/* Simulated 3D Viewport */}
@@ -751,8 +751,8 @@ const App = () => {
                                             className="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-screen"
                                         />
                                         
-                                        {/* Floating UI Overlay */}
-                                        <div className="absolute top-4 left-4 right-4 flex justify-between text-[10px] font-mono text-slate-400">
+                                        {/* Floating UI Overlay (Hidden on very small mobile) */}
+                                        <div className="hidden sm:flex absolute top-4 left-4 right-4 justify-between text-[10px] font-mono text-slate-400">
                                             <div className="space-y-1">
                                                 <div>Perspective</div>
                                                 <div>(1) Collection | Camera</div>
@@ -764,39 +764,38 @@ const App = () => {
                                         </div>
 
                                         {/* Active Render Bar */}
-                                        <div className="absolute bottom-6 left-6 right-6">
-                                            <div className="flex justify-between text-xs text-blue-400 mb-2 font-mono">
+                                        <div className="absolute bottom-4 sm:bottom-6 left-4 right-4 sm:left-6 sm:right-6">
+                                            <div className="flex justify-between text-[10px] sm:text-xs text-blue-400 mb-1.5 sm:mb-2 font-mono">
                                                 <span>Rendering Frame 104/500</span>
                                                 <span>82%</span>
                                             </div>
-                                            <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                            <div className="h-1 sm:h-1.5 bg-slate-800 rounded-full overflow-hidden">
                                                 <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 w-[82%] animate-[typing_4s_infinite]"></div>
                                             </div>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="w-full h-full bg-[#0d1117] p-6 font-mono text-sm overflow-hidden">
+                                    <div className="w-full h-full bg-[#0d1117] p-4 sm:p-6 font-mono text-[10px] sm:text-sm overflow-hidden break-all whitespace-pre-wrap">
                                         <div className="space-y-1">
-                                            <div className="flex items-center text-slate-400 mb-4 border-b border-slate-800 pb-2">
-                                                <Terminal size={14} className="mr-2" /> bash — 80x24
+                                            <div className="flex items-center text-slate-400 mb-2 sm:mb-4 border-b border-slate-800 pb-2">
+                                                <Terminal size={12} className="mr-2 shrink-0" /> bash — 80x24
                                             </div>
                                             <div><span className="text-purple-400">dev</span>@<span className="text-indigo-400">cloud</span>:~$ docker-compose up -d --build</div>
                                             <div className="text-slate-500 pt-1">Building backend service...</div>
                                             <div className="text-slate-300">[+] Building 4.2s (12/12) <span className="text-green-400">FINISHED</span></div>
-                                            <div className="text-slate-300 pl-4">{'=>'} [internal] load build definition from Dockerfile</div>
-                                            <div className="text-slate-300 pl-4">{'=>'} [internal] load metadata for docker.io/library/python:3.9</div>
-                                            <div className="text-slate-500 pt-2">Training Model (Epoch 4/50)...</div>
+                                            <div className="text-slate-300 pl-2 sm:pl-4">{'=>'} [internal] load build definition</div>
+                                            <div className="text-slate-500 pt-1 sm:pt-2">Training Model (Epoch 4/50)...</div>
                                             
-                                            <div className="mt-4 bg-slate-800/50 p-3 rounded border border-slate-700">
-                                                 <div className="flex justify-between text-xs mb-1 text-slate-400">
+                                            <div className="mt-2 sm:mt-4 bg-slate-800/50 p-2 sm:p-3 rounded border border-slate-700">
+                                                 <div className="flex justify-between text-[9px] sm:text-xs mb-1 text-slate-400">
                                                      <span>Loss: 0.2314</span>
                                                      <span>Accuracy: 94.2%</span>
                                                  </div>
-                                                 <div className="h-1 w-full bg-slate-700 rounded-full overflow-hidden">
+                                                 <div className="h-1 sm:h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
                                                      <div className="h-full bg-purple-500 w-[65%] animate-pulse"></div>
                                                  </div>
                                             </div>
-                                            <div className="text-purple-400 animate-pulse mt-2">_</div>
+                                            <div className="text-purple-400 animate-pulse mt-1 sm:mt-2">_</div>
                                         </div>
                                     </div>
                                 )}
@@ -809,52 +808,52 @@ const App = () => {
       </section>
 
       {/* NEW: Performance Benchmark */}
-      <section id="performance" className="py-24 relative">
+      <section id="performance" className="py-16 sm:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Benchmarks Don't Lie</h2>
-                    <p className="text-slate-400 max-w-2xl mx-auto">
+                <div className="text-center mb-10 sm:mb-16">
+                    <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 sm:mb-6">Benchmarks Don't Lie</h2>
+                    <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">
                         See how our Studio tier stacks up against top-tier consumer laptops.
-                        <span className="block text-sm mt-2 text-slate-500">Benchmark: Blender Cycles Render (Classroom Scene) - Lower is Better</span>
+                        <span className="block text-xs sm:text-sm mt-2 text-slate-500">Benchmark: Blender Cycles Render (Classroom Scene) - Lower is Better</span>
                     </p>
                 </div>
             </Reveal>
 
-            <div className="max-w-4xl mx-auto glass-panel p-8 md:p-12 rounded-3xl border border-white/10 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-5">
+            <div className="max-w-4xl mx-auto glass-panel p-6 sm:p-8 md:p-12 rounded-3xl border border-white/10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-5 hidden sm:block">
                     <BarChart3 size={200} />
                 </div>
                 
-                <div className="space-y-8 relative z-10">
+                <div className="space-y-6 sm:space-y-8 relative z-10">
                     <BenchmarkBar 
-                        label="Personal PC (Studio Tier)" 
+                        label="SkyDc (Studio Tier)" 
                         value="42s" 
                         width="15%" 
                         color="bg-gradient-to-r from-blue-500 to-cyan-400"
-                        icon={<Monitor size={20} />}
+                        icon={<Monitor size={18} className="sm:w-5 sm:h-5" />}
                         highlight={true}
                     />
                     <BenchmarkBar 
-                        label="High-End Gaming Laptop (RTX 4070)" 
+                        label="Gaming Laptop (RTX 4070)" 
                         value="184s" 
                         width="55%" 
                         color="bg-slate-700"
-                        icon={<Laptop size={20} />}
+                        icon={<Laptop size={18} className="sm:w-5 sm:h-5" />}
                     />
                     <BenchmarkBar 
                         label="MacBook Pro M3 Max" 
                         value="112s" 
                         width="35%" 
                         color="bg-slate-700"
-                        icon={<Laptop size={20} />}
+                        icon={<Laptop size={18} className="sm:w-5 sm:h-5" />}
                     />
                     <BenchmarkBar 
                         label="Average Ultrabook" 
                         value="840s" 
                         width="100%" 
                         color="bg-slate-800"
-                        icon={<Laptop size={20} />}
+                        icon={<Laptop size={18} className="sm:w-5 sm:h-5" />}
                     />
                 </div>
             </div>
@@ -862,14 +861,14 @@ const App = () => {
       </section>
 
       {/* NEW: Testimonials */}
-      <section className="py-24 bg-gradient-to-b from-[#020617] to-slate-950 border-t border-white/5">
+      <section className="py-16 sm:py-24 bg-gradient-to-b from-[#020617] to-slate-950 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Loved by the Best</h2>
+                <div className="text-center mb-10 sm:mb-16">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">Loved by the Best</h2>
                 </div>
             </Reveal>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <TestimonialCard 
                     quote="I rendered a 4,000 frame animation in 2 hours. My laptop would have taken 3 days. This is actual magic."
                     name="Sarah Jenkins"
@@ -893,7 +892,7 @@ const App = () => {
       </section>
 
       {/* Tech Specs (The Engine Room) */}
-      <section id="specs" className="py-24 relative bg-[#020617] overflow-hidden">
+      <section id="specs" className="py-16 sm:py-24 relative bg-[#020617] overflow-hidden">
         {/* Background Beams */}
         <div className="absolute inset-0 z-0">
             <div className="absolute top-1/4 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent"></div>
@@ -902,50 +901,50 @@ const App = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <Reveal>
-            <div className="text-center mb-16">
+            <div className="text-center mb-12 sm:mb-16">
               <span className="text-cyan-400 font-mono text-xs tracking-widest uppercase mb-2 block">Under the Hood</span>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">The Engine Room</h2>
-              <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6">The Engine Room</h2>
+              <p className="text-slate-400 max-w-2xl mx-auto text-base sm:text-lg">
                 We've built the world's most powerful consumer cloud infrastructure. 
                 Dedicated GPUs, enterprise networking, and blistering fast storage.
               </p>
             </div>
           </Reveal>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
              {/* GPU Card */}
              <Reveal delay={0}>
                 <div className="tech-card-gradient p-1 rounded-3xl h-full group">
-                    <div className="bg-[#0B1120] rounded-[22px] p-8 h-full relative overflow-hidden transition-all duration-500 group-hover:translate-y-[-5px]">
-                        <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <Cpu size={120} />
+                    <div className="bg-[#0B1120] rounded-[22px] p-6 sm:p-8 h-full relative overflow-hidden transition-all duration-500 md:group-hover:translate-y-[-5px]">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 sm:opacity-10 md:group-hover:opacity-20 transition-opacity">
+                            <Cpu size={100} className="sm:w-[120px] sm:h-[120px]" />
                         </div>
                         <div className="relative z-10">
-                            <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-6">
-                                <Cpu className="text-green-400" />
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-4 sm:mb-6">
+                                <Cpu className="text-green-400 h-5 w-5 sm:h-6 sm:w-6" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Graphic Powerhouse</h3>
-                            <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600 mb-4">
+                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Graphic Powerhouse</h3>
+                            <div className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600 mb-3 sm:mb-4">
                                 RTX 4090
                             </div>
-                            <p className="text-slate-400 text-sm mb-6">
+                            <p className="text-slate-400 text-xs sm:text-sm mb-6">
                                 The ultimate GPU for creators and gamers. 24GB GDDR6X VRAM and 16,384 CUDA cores.
                             </p>
                             
                             {/* Visual Bar */}
-                            <div className="space-y-3">
-                                <div className="flex justify-between text-xs text-slate-500 font-mono">
-                                    <span>Personal PC</span>
+                            <div className="space-y-3 mt-auto">
+                                <div className="flex justify-between text-[10px] sm:text-xs text-slate-500 font-mono">
+                                    <span>SkyDc</span>
                                     <span className="text-green-400">100 TFLOPS</span>
                                 </div>
-                                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div className="h-1.5 sm:h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                                     <div className="h-full bg-green-500 w-full"></div>
                                 </div>
-                                <div className="flex justify-between text-xs text-slate-500 font-mono opacity-50">
+                                <div className="flex justify-between text-[10px] sm:text-xs text-slate-500 font-mono opacity-50">
                                     <span>Avg. Laptop</span>
                                     <span>10 TFLOPS</span>
                                 </div>
-                                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden opacity-50">
+                                <div className="h-1.5 sm:h-2 w-full bg-slate-800 rounded-full overflow-hidden opacity-50">
                                     <div className="h-full bg-slate-500 w-[10%]"></div>
                                 </div>
                             </div>
@@ -957,30 +956,30 @@ const App = () => {
              {/* Network Card */}
              <Reveal delay={100}>
                 <div className="tech-card-gradient p-1 rounded-3xl h-full group">
-                    <div className="bg-[#0B1120] rounded-[22px] p-8 h-full relative overflow-hidden transition-all duration-500 group-hover:translate-y-[-5px]">
-                        <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <Wifi size={120} />
+                    <div className="bg-[#0B1120] rounded-[22px] p-6 sm:p-8 h-full relative overflow-hidden transition-all duration-500 md:group-hover:translate-y-[-5px]">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 sm:opacity-10 md:group-hover:opacity-20 transition-opacity">
+                            <Wifi size={100} className="sm:w-[120px] sm:h-[120px]" />
                         </div>
                         <div className="relative z-10">
-                            <div className="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center mb-6">
-                                <Wifi className="text-cyan-400" />
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center mb-4 sm:mb-6">
+                                <Wifi className="text-cyan-400 h-5 w-5 sm:h-6 sm:w-6" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Zero Latency</h3>
-                            <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 mb-4">
+                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Zero Latency</h3>
+                            <div className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 mb-3 sm:mb-4">
                                 &lt; 15ms
                             </div>
-                            <p className="text-slate-400 text-sm mb-6">
+                            <p className="text-slate-400 text-xs sm:text-sm mb-6">
                                 Our "Holographic Streaming Protocol" predicts frames before they render, creating a feel indistinguishable from local hardware.
                             </p>
 
-                            <div className="grid grid-cols-2 gap-4 mt-8">
-                                <div className="bg-slate-900/50 p-3 rounded-lg text-center border border-white/5">
-                                    <div className="text-xs text-slate-500 uppercase">Bitrate</div>
-                                    <div className="text-xl font-bold text-white">150 Mbps</div>
+                            <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-auto pt-4">
+                                <div className="bg-slate-900/50 p-2 sm:p-3 rounded-lg text-center border border-white/5">
+                                    <div className="text-[10px] sm:text-xs text-slate-500 uppercase">Bitrate</div>
+                                    <div className="text-base sm:text-xl font-bold text-white">150 Mbps</div>
                                 </div>
-                                <div className="bg-slate-900/50 p-3 rounded-lg text-center border border-white/5">
-                                    <div className="text-xs text-slate-500 uppercase">Res</div>
-                                    <div className="text-xl font-bold text-white">4K / 60</div>
+                                <div className="bg-slate-900/50 p-2 sm:p-3 rounded-lg text-center border border-white/5">
+                                    <div className="text-[10px] sm:text-xs text-slate-500 uppercase">Res</div>
+                                    <div className="text-base sm:text-xl font-bold text-white">4K / 60</div>
                                 </div>
                             </div>
                         </div>
@@ -991,27 +990,29 @@ const App = () => {
              {/* Storage Card */}
              <Reveal delay={200}>
                 <div className="tech-card-gradient p-1 rounded-3xl h-full group">
-                    <div className="bg-[#0B1120] rounded-[22px] p-8 h-full relative overflow-hidden transition-all duration-500 group-hover:translate-y-[-5px]">
-                        <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <HardDrive size={120} />
+                    <div className="bg-[#0B1120] rounded-[22px] p-6 sm:p-8 h-full relative overflow-hidden transition-all duration-500 md:group-hover:translate-y-[-5px]">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 sm:opacity-10 md:group-hover:opacity-20 transition-opacity">
+                            <HardDrive size={100} className="sm:w-[120px] sm:h-[120px]" />
                         </div>
-                        <div className="relative z-10">
-                            <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-6">
-                                <HardDrive className="text-purple-400" />
+                        <div className="relative z-10 flex flex-col h-full">
+                            <div>
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4 sm:mb-6">
+                                    <HardDrive className="text-purple-400 h-5 w-5 sm:h-6 sm:w-6" />
+                                </div>
+                                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Instant I/O</h3>
+                                <div className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-3 sm:mb-4">
+                                    7,000 MB/s
+                                </div>
+                                <p className="text-slate-400 text-xs sm:text-sm mb-6">
+                                    NVMe Gen 4 SSDs mean your projects load instantly. 
+                                    Expand storage up to 8TB with a single click.
+                                </p>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Instant I/O</h3>
-                            <div className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-4">
-                                7,000 MB/s
-                            </div>
-                            <p className="text-slate-400 text-sm mb-6">
-                                NVMe Gen 4 SSDs mean your projects load instantly. 
-                                Expand storage up to 8TB with a single click.
-                            </p>
                             
-                            <div className="mt-4 p-4 bg-slate-900/80 rounded-lg border border-purple-500/20 font-mono text-xs text-green-400">
+                            <div className="mt-auto p-3 sm:p-4 bg-slate-900/80 rounded-lg border border-purple-500/20 font-mono text-[10px] sm:text-xs text-green-400 break-all">
                                 <div>$ disk_speed_test -w -r</div>
-                                <div className="mt-1 text-slate-300">Writing 5GB file... <span className="text-green-400">0.8s</span></div>
-                                <div className="text-slate-300">Reading 100GB dataset... <span className="text-green-400">14.2s</span></div>
+                                <div className="mt-1 text-slate-300">Write 5GB... <span className="text-green-400">0.8s</span></div>
+                                <div className="text-slate-300">Read 100GB... <span className="text-green-400">14.2s</span></div>
                             </div>
                         </div>
                     </div>
@@ -1022,27 +1023,27 @@ const App = () => {
       </section>
 
       {/* NEW: FAQ Section */}
-      <section className="py-24 relative">
+      <section className="py-16 sm:py-24 relative">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal>
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Common Queries</h2>
-                    <p className="text-slate-400">Everything you need to know about cloud computing.</p>
+                <div className="text-center mb-10 sm:mb-16">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">Common Queries</h2>
+                    <p className="text-slate-400 text-sm sm:text-base">Everything you need to know about cloud computing.</p>
                 </div>
             </Reveal>
             
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
                 {faqs.map((faq, i) => (
                     <Reveal delay={i * 100} key={i}>
                         <div className="glass-panel rounded-xl overflow-hidden">
                             <button 
                                 onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                                className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
+                                className="w-full flex items-center justify-between p-4 sm:p-6 text-left focus:outline-none"
                             >
-                                <span className="text-lg font-medium text-slate-200">{faq.q}</span>
-                                {activeFaq === i ? <ChevronUp className="text-blue-400" /> : <ChevronDown className="text-slate-500" />}
+                                <span className="text-sm sm:text-lg font-medium text-slate-200 pr-4">{faq.q}</span>
+                                {activeFaq === i ? <ChevronUp className="text-blue-400 shrink-0" /> : <ChevronDown className="text-slate-500 shrink-0" />}
                             </button>
-                            <div className={`px-6 text-slate-400 overflow-hidden transition-all duration-300 ease-in-out ${activeFaq === i ? 'max-h-40 pb-6 opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className={`px-4 sm:px-6 text-slate-400 text-xs sm:text-base overflow-hidden transition-all duration-300 ease-in-out ${activeFaq === i ? 'max-h-60 sm:max-h-40 pb-4 sm:pb-6 opacity-100' : 'max-h-0 opacity-0'}`}>
                                 {faq.a}
                             </div>
                         </div>
@@ -1053,85 +1054,85 @@ const App = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 relative overflow-hidden">
+      <section className="py-24 sm:py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 to-cyan-900/40 z-0"></div>
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         
         <Reveal>
             <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-8 tracking-tight">Ready to upgrade your workflow?</h2>
-            <p className="text-cyan-100 text-xl mb-12 max-w-2xl mx-auto">
-                Join 10,000+ engineers and creatives building on Personal PC.
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 sm:mb-8 tracking-tight">Ready to upgrade your workflow?</h2>
+            <p className="text-cyan-100 text-base sm:text-xl mb-10 sm:mb-12 max-w-2xl mx-auto">
+                Join 10,000+ engineers and creatives building on SkyDc.
                 Get <span className="font-bold text-white bg-blue-500/20 px-2 rounded">$20 credit</span> when you sign up today.
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-                <button className="bg-white text-slate-950 hover:bg-cyan-50 px-10 py-5 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-transform hover:scale-105">
+                <button className="bg-white text-slate-950 hover:bg-cyan-50 px-8 sm:px-10 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-transform hover:scale-[1.02]">
                     Create Free Account
                 </button>
-                <button className="px-10 py-5 rounded-full font-bold text-lg text-white border border-white/20 hover:bg-white/10 backdrop-blur-sm transition-all">
+                <button className="px-8 sm:px-10 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg text-white border border-white/20 hover:bg-white/10 backdrop-blur-sm transition-all">
                     View Documentation
                 </button>
             </div>
-            <p className="mt-8 text-sm text-cyan-200/60">No credit card required for trial.</p>
+            <p className="mt-6 sm:mt-8 text-xs sm:text-sm text-cyan-200/60">No credit card required for trial.</p>
             </div>
         </Reveal>
       </section>
 
       {/* Footer */}
-      <footer id="footer" className="bg-[#020617] pt-20 pb-10 border-t border-slate-800">
+      <footer id="footer" className="bg-[#020617] pt-16 sm:pt-20 pb-8 sm:pb-10 border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-2 md:col-span-1">
-              <div className="flex items-center space-x-2 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 sm:gap-12 mb-12 sm:mb-16">
+            <div className="col-span-2 md:col-span-4 lg:col-span-2">
+              <div className="flex items-center space-x-2 mb-4 sm:mb-6">
                 <div className="bg-blue-600 p-1.5 rounded-lg">
-                    <Monitor className="h-6 w-6 text-white" />
+                    <Monitor className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
                 <span className="text-xl font-bold text-white">SkyDC</span>
               </div>
-              <p className="text-slate-500 text-sm leading-relaxed mb-6">
+              <p className="text-slate-500 text-xs sm:text-sm leading-relaxed mb-6 max-w-sm">
                 High-performance cloud desktops for the modern workforce. Built for speed, security, and scale.
               </p>
               <div className="flex space-x-4">
                {/* Social placeholders */}
-               <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-cyan-500 transition-colors cursor-pointer flex items-center justify-center text-white/50 hover:text-white">𝕏</div>
-               <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center text-white/50 hover:text-white">in</div>
-               <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-purple-600 transition-colors cursor-pointer flex items-center justify-center text-white/50 hover:text-white">G</div>
+               <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-cyan-500 transition-colors cursor-pointer flex items-center justify-center text-white/50 hover:text-white text-sm">𝕏</div>
+               <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-blue-600 transition-colors cursor-pointer flex items-center justify-center text-white/50 hover:text-white text-sm">in</div>
+               <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-purple-600 transition-colors cursor-pointer flex items-center justify-center text-white/50 hover:text-white text-sm">G</div>
               </div>
             </div>
-            <div>
-              <h4 className="text-white font-bold mb-6">Product</h4>
-              <ul className="space-y-4 text-sm text-slate-400">
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Cloud Computer</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Application Streaming</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Performance</a></li>
+            <div className="col-span-1">
+              <h4 className="text-white font-bold mb-4 sm:mb-6 text-sm sm:text-base">Product</h4>
+              <ul className="space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-400">
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Cloud Computer</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Application Streaming</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Pricing</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Performance</a></li>
               </ul>
             </div>
-            <div>
-              <h4 className="text-white font-bold mb-6">Resources</h4>
-              <ul className="space-y-4 text-sm text-slate-400">
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Community</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Status</a></li>
+            <div className="col-span-1">
+              <h4 className="text-white font-bold mb-4 sm:mb-6 text-sm sm:text-base">Resources</h4>
+              <ul className="space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-400">
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Blog</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Help Center</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Community</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Status</a></li>
               </ul>
             </div>
-            <div>
-              <h4 className="text-white font-bold mb-6">Company</h4>
-              <ul className="space-y-4 text-sm text-slate-400">
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-cyan-400 transition-colors">Privacy Policy</a></li>
+            <div className="col-span-2 sm:col-span-1">
+              <h4 className="text-white font-bold mb-4 sm:mb-6 text-sm sm:text-base">Company</h4>
+              <ul className="space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-400 flex flex-wrap sm:flex-col gap-4 sm:gap-0">
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">About Us</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Careers</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Contact</a></li>
+                <li><a href="#" className="hover:text-cyan-400 transition-colors block py-1">Privacy Policy</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-600 text-sm">© 2024 Personal PC Inc. All rights reserved.</p>
-            <div className="flex space-x-6 mt-4 md:mt-0 text-sm text-slate-500">
-               <a href="#" className="hover:text-white transition-colors">Terms</a>
-               <a href="#" className="hover:text-white transition-colors">Privacy</a>
-               <a href="#" className="hover:text-white transition-colors">Cookies</a>
+          <div className="border-t border-slate-900 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center text-center sm:text-left">
+            <p className="text-slate-600 text-xs sm:text-sm">© 2024 SkyDc Inc. All rights reserved.</p>
+            <div className="flex flex-wrap justify-center space-x-4 sm:space-x-6 mt-4 md:mt-0 text-xs sm:text-sm text-slate-500">
+               <a href="#" className="hover:text-white transition-colors py-1">Terms</a>
+               <a href="#" className="hover:text-white transition-colors py-1">Privacy</a>
+               <a href="#" className="hover:text-white transition-colors py-1">Cookies</a>
             </div>
           </div>
         </div>
@@ -1144,41 +1145,43 @@ const App = () => {
 
 const FeatureCard = React.memo(({ icon, title, description, delay }) => (
   <Reveal delay={delay} className="h-full">
-    <div className="glass-panel glass-card-hover p-8 rounded-3xl h-full transition-all duration-300 group hover:-translate-y-2">
-        <div className="mb-6 bg-gradient-to-br from-slate-800 to-slate-900 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 ring-1 ring-white/10 group-hover:ring-cyan-500/50">
+    <div className="glass-panel glass-card-hover p-6 sm:p-8 rounded-3xl h-full transition-all duration-300 group md:hover:-translate-y-2">
+        <div className="mb-4 sm:mb-6 bg-gradient-to-br from-slate-800 to-slate-900 w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-300 ring-1 ring-white/10 group-hover:ring-cyan-500/50">
         {icon}
         </div>
-        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">{title}</h3>
-        <p className="text-slate-400 leading-relaxed text-sm">{description}</p>
+        <h3 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3 group-hover:text-cyan-400 transition-colors">{title}</h3>
+        <p className="text-slate-400 leading-relaxed text-xs sm:text-sm">{description}</p>
     </div>
   </Reveal>
 ));
 
 const StepCard = React.memo(({ number, title, description, icon, delay }) => (
-    <Reveal delay={delay} className="h-full relative z-10">
-        <div className="bg-[#0B1120] border border-white/10 p-8 rounded-3xl h-full flex flex-col items-center text-center relative group hover:border-blue-500/50 transition-all duration-300">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 border border-white/10 w-16 h-16 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+    <Reveal delay={delay} className="h-full relative z-10 w-full">
+        <div className="bg-[#0B1120] border border-white/10 p-6 sm:p-8 rounded-3xl h-full flex flex-col items-center text-center relative group hover:border-blue-500/50 transition-all duration-300 mt-6 md:mt-0">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 border border-white/10 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
                 {icon}
             </div>
-            <div className="mt-8 mb-4">
-                <span className="text-5xl font-black text-slate-800 select-none absolute top-10 left-1/2 -translate-x-1/2 opacity-50 z-0">{number}</span>
-                <h3 className="text-xl font-bold text-white relative z-10">{title}</h3>
+            <div className="mt-6 sm:mt-8 mb-3 sm:mb-4">
+                <span className="text-4xl sm:text-5xl font-black text-slate-800 select-none absolute top-8 sm:top-10 left-1/2 -translate-x-1/2 opacity-50 z-0">{number}</span>
+                <h3 className="text-lg sm:text-xl font-bold text-white relative z-10">{title}</h3>
             </div>
-            <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">{description}</p>
         </div>
     </Reveal>
 ));
 
 const BenchmarkBar = React.memo(({ label, value, width, color, icon, highlight = false }) => (
     <Reveal className="w-full">
-        <div className="flex items-center mb-2">
-            <div className={`p-1.5 rounded-lg mr-3 ${highlight ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-800 text-slate-500'}`}>
-                {icon}
+        <div className="flex flex-col sm:flex-row sm:items-center mb-2">
+            <div className="flex items-center">
+                <div className={`p-1.5 rounded-lg mr-2 sm:mr-3 ${highlight ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-800 text-slate-500'}`}>
+                    {icon}
+                </div>
+                <span className={`text-xs sm:text-sm font-medium ${highlight ? 'text-white' : 'text-slate-400'}`}>{label}</span>
             </div>
-            <span className={`text-sm font-medium ${highlight ? 'text-white' : 'text-slate-400'}`}>{label}</span>
-            <span className="ml-auto text-sm font-mono text-slate-500">{value}</span>
+            <span className="mt-1 sm:mt-0 sm:ml-auto text-[10px] sm:text-sm font-mono text-slate-500 pl-8 sm:pl-0">{value}</span>
         </div>
-        <div className="h-4 w-full bg-slate-800/50 rounded-full overflow-hidden">
+        <div className="h-3 sm:h-4 w-full bg-slate-800/50 rounded-full overflow-hidden">
             <div 
                 className={`h-full rounded-full ${color} relative animate-grow-bar`} 
                 style={{ '--target-width': width }}
@@ -1191,23 +1194,23 @@ const BenchmarkBar = React.memo(({ label, value, width, color, icon, highlight =
 
 const TestimonialCard = React.memo(({ quote, name, role, delay }) => (
     <Reveal delay={delay} className="h-full">
-        <div className="glass-panel p-8 rounded-2xl h-full relative group">
-            <div className="absolute -top-4 left-8 text-6xl text-blue-500/20 font-serif">"</div>
-            <p className="text-slate-300 mb-6 relative z-10 italic leading-relaxed">{quote}</p>
-            <div className="flex items-center mt-auto border-t border-white/5 pt-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm mr-3">
+        <div className="glass-panel p-6 sm:p-8 rounded-2xl h-full flex flex-col relative group">
+            <div className="absolute -top-3 left-6 sm:-top-4 sm:left-8 text-5xl sm:text-6xl text-blue-500/20 font-serif">"</div>
+            <p className="text-slate-300 mb-6 relative z-10 italic leading-relaxed text-sm sm:text-base flex-grow">{quote}</p>
+            <div className="flex items-center border-t border-white/5 pt-4 mt-auto">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs sm:text-sm mr-3 shrink-0">
                     {name.charAt(0)}
                 </div>
-                <div>
-                    <div className="text-white font-bold text-sm">{name}</div>
-                    <div className="text-blue-400 text-xs uppercase tracking-wider font-semibold">{role}</div>
+                <div className="min-w-0">
+                    <div className="text-white font-bold text-xs sm:text-sm truncate">{name}</div>
+                    <div className="text-blue-400 text-[10px] sm:text-xs uppercase tracking-wider font-semibold truncate">{role}</div>
                 </div>
-                <div className="ml-auto flex text-yellow-500">
-                    <Star size={14} fill="currentColor" />
-                    <Star size={14} fill="currentColor" />
-                    <Star size={14} fill="currentColor" />
-                    <Star size={14} fill="currentColor" />
-                    <Star size={14} fill="currentColor" />
+                <div className="ml-auto flex text-yellow-500 shrink-0 pl-2">
+                    <Star size={12} className="sm:w-3.5 sm:h-3.5" fill="currentColor" />
+                    <Star size={12} className="sm:w-3.5 sm:h-3.5" fill="currentColor" />
+                    <Star size={12} className="sm:w-3.5 sm:h-3.5" fill="currentColor" />
+                    <Star size={12} className="sm:w-3.5 sm:h-3.5" fill="currentColor" />
+                    <Star size={12} className="sm:w-3.5 sm:h-3.5" fill="currentColor" />
                 </div>
             </div>
         </div>
@@ -1215,11 +1218,11 @@ const TestimonialCard = React.memo(({ quote, name, role, delay }) => (
 ));
 
 const ListItem = React.memo(({ text, color = "text-blue-400" }) => (
-  <li className="flex items-center text-slate-300">
-    <div className={`bg-white/5 p-1 rounded-full mr-3 ${color.replace('text', 'bg')}/10`}>
-        <CheckCircle className={`h-4 w-4 flex-shrink-0 ${color}`} />
+  <li className="flex items-start sm:items-center text-slate-300">
+    <div className={`bg-white/5 p-1 rounded-full mr-3 mt-0.5 sm:mt-0 ${color.replace('text', 'bg')}/10 shrink-0`}>
+        <CheckCircle className={`h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0 ${color}`} />
     </div>
-    <span>{text}</span>
+    <span className="text-xs sm:text-sm leading-relaxed">{text}</span>
   </li>
 ));
 
